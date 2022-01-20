@@ -3,6 +3,7 @@ package com.accenture.airportsappspring.model;
 import com.opencsv.bean.CsvBindByPosition;
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -62,6 +63,7 @@ public class Airport {
     String wikipediaLink;
 
     @CsvBindByPosition(position = 17)
+    @Column(length = 500)
     String keywords;
 
 }
