@@ -16,7 +16,7 @@ import java.util.List;
 public class CsvReader {
 
     @SuppressWarnings("unchecked")
-    public static <T> List<T> readCsv(String fileName, Class<T> tClass) throws IOException {
+    public <T> List<T> readCsv(String fileName, Class<T> tClass) throws IOException {
         HeaderColumnNameMappingStrategy<T> headerColumnNameMappingStrategy = new HeaderColumnNameMappingStrategy<>();
         headerColumnNameMappingStrategy.setType(tClass);
         Path path = Paths.get(fileName);
