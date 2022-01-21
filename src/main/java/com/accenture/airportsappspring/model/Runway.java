@@ -1,6 +1,6 @@
 package com.accenture.airportsappspring.model;
 
-import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvBindByName;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -10,64 +10,64 @@ import javax.persistence.Id;
 public class Runway {
 
     @Id
-    @CsvBindByPosition(position = 0)
+    @CsvBindByName
     String id;
 
-    @CsvBindByPosition(position = 1)
+    @CsvBindByName(column = "airport_ref")
     String airportRef;
 
-    @CsvBindByPosition(position = 2)
+    @CsvBindByName(column = "airport_ident")
     String airportIdent;
 
-    @CsvBindByPosition(position = 3)
+    @CsvBindByName(column = "length_ft")
     String lengthFt;
 
-    @CsvBindByPosition(position = 4)
+    @CsvBindByName(column = "width_ft")
     String widthFt;
 
-    @CsvBindByPosition(position = 5)
+    @CsvBindByName
     String surface;
 
-    @CsvBindByPosition(position = 6)
+    @CsvBindByName
     String lighted;
 
-    @CsvBindByPosition(position = 7)
+    @CsvBindByName
     String closed;
 
-    @CsvBindByPosition(position = 8)
+    @CsvBindByName(column = "le_ident")
     String leIdent;
 
-    @CsvBindByPosition(position = 9)
+    @CsvBindByName(column = "le_latitude_deg")
     String leLatitudeDeg;
 
-    @CsvBindByPosition(position = 10)
+    @CsvBindByName(column = "le_longitude_deg")
     String leLongitudeDeg;
 
-    @CsvBindByPosition(position = 11)
+    @CsvBindByName(column = "le_elevation_ft")
     String leElevationFt;
 
-    @CsvBindByPosition(position = 12)
+    @CsvBindByName(column = "le_heading_degT")
     String leHeadingDegT;
 
-    @CsvBindByPosition(position = 13)
+    @CsvBindByName(column = "le_displaced_threshold_ft")
     String leDisplacedThresholdFt;
 
-    @CsvBindByPosition(position = 14)
-    String heIent;
+    @CsvBindByName(column = "he_ident")
+    String heIdent;
 
-    @CsvBindByPosition(position = 15)
+    @CsvBindByName(column = "he_latitude_deg")
     String heLatitudeDeg;
 
-    @CsvBindByPosition(position = 16)
+    @CsvBindByName(column = "he_longitude_deg")
     String heLongitudeDeg;
 
-    @CsvBindByPosition(position = 17)
+    @CsvBindByName(column = "he_elevation_ft")
     String heElevationFt;
 
-    @CsvBindByPosition(position = 18)
+    @CsvBindByName(column = "he_heading_degT")
     String heHeadingDegT;
 
-    @CsvBindByPosition(position = 19)
+    @CsvBindByName(column = "he_displaced_threshold_ft")
     String heDisplacedThresholdFt;
 
 }

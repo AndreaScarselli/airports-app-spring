@@ -1,6 +1,6 @@
 package com.accenture.airportsappspring.model;
 
-import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvBindByName;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -10,21 +10,21 @@ import javax.persistence.Id;
 public class Country {
 
     @Id
-    @CsvBindByPosition(position = 0)
+    @CsvBindByName
     String id;
 
-    @CsvBindByPosition(position = 1)
+    @CsvBindByName
     String code;
 
-    @CsvBindByPosition(position = 2)
+    @CsvBindByName
     String name;
 
-    @CsvBindByPosition(position = 3)
+    @CsvBindByName
     String continent;
 
-    @CsvBindByPosition(position = 4)
+    @CsvBindByName(column = "wikipedia_link")
     String wikipediaLink;
 
-    @CsvBindByPosition(position = 5)
+    @CsvBindByName
     String keywords;
 }

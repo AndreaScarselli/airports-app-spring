@@ -1,6 +1,6 @@
 package com.accenture.airportsappspring.model;
 
-import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvBindByName;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -11,58 +11,58 @@ import javax.persistence.Id;
 public class Airport {
 
     @Id
-    @CsvBindByPosition(position = 0)
+    @CsvBindByName
     String id;
 
-    @CsvBindByPosition(position = 1)
+    @CsvBindByName
     String ident;
 
-    @CsvBindByPosition(position = 2)
+    @CsvBindByName
     String type;
 
-    @CsvBindByPosition(position = 3)
+    @CsvBindByName
     String name;
 
-    @CsvBindByPosition(position = 4)
+    @CsvBindByName(column = "latitude_deg")
     String latitudeDeg;
 
-    @CsvBindByPosition(position = 5)
+    @CsvBindByName(column = "longitude_deg")
     String longitudeDeg;
 
-    @CsvBindByPosition(position = 6)
+    @CsvBindByName(column = "elevation_ft")
     String elevationFt;
 
-    @CsvBindByPosition(position = 7)
+    @CsvBindByName
     String continent;
 
-    @CsvBindByPosition(position = 8)
+    @CsvBindByName(column = "iso_country")
     String isoCountry;
 
-    @CsvBindByPosition(position = 9)
+    @CsvBindByName(column = "iso_region")
     String isoRegion;
 
-    @CsvBindByPosition(position = 10)
+    @CsvBindByName
     String municipality;
 
-    @CsvBindByPosition(position = 11)
+    @CsvBindByName(column = "scheduled_service")
     String scheduledService;
 
-    @CsvBindByPosition(position = 12)
+    @CsvBindByName(column = "gps_code")
     String gpsCode;
 
-    @CsvBindByPosition(position = 13)
+    @CsvBindByName(column = "iata_code")
     String iataCode;
 
-    @CsvBindByPosition(position = 14)
+    @CsvBindByName(column = "local_code")
     String localCode;
 
-    @CsvBindByPosition(position = 15)
+    @CsvBindByName(column = "home_link")
     String homeLink;
 
-    @CsvBindByPosition(position = 16)
+    @CsvBindByName(column = "wikipedia_link")
     String wikipediaLink;
 
-    @CsvBindByPosition(position = 17)
+    @CsvBindByName
     @Column(length = 500)
     String keywords;
 
