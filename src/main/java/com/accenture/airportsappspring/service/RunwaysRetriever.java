@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 @Service
 public class RunwaysRetriever {
@@ -30,11 +29,8 @@ public class RunwaysRetriever {
         this.runwayRepository = runwayRepository;
     }
 
-    public void searchRunwaysByCountry() {
+    public Map<String, List<Runway>> searchRunwaysByCountry(String country) {
         Map<String, List<Runway>> runwaysPerAirport = new HashMap<>();
-        System.out.println("Enter country or country code: \n");
-        Scanner scanner = new Scanner(System.in);
-        String country = scanner.nextLine();
 
         if(country.length() > COUNTRY_CODE_LENGTH) {
             country = convertCountryNameToCountryCode(country);
@@ -43,8 +39,14 @@ public class RunwaysRetriever {
         List<Airport> airports = findAirportsInACountry(country);
 
         for(Airport airport: airports) {
-            runwaysPerAirport.put(airport.getName(), findRunwaysInAnAirport(airport));
+            // discard airports without runways
+            List<Runway> runwaysInTheAirport = findRunwaysInAnAirport(airport);
+            if(!runwaysInTheAirport.isEmpty()) {
+                runwaysPerAirport.put(airport.getName(), runwaysInTheAirport);
+            }
         }
+
+        return runwaysPerAirport;
     }
 
     private List<Runway> findRunwaysInAnAirport(Airport airport) {

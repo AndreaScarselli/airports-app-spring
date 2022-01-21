@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 @Component
 public class AirportsAppCommandLineRunner implements CommandLineRunner {
@@ -38,14 +40,21 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
     private final CountryRepository countryRepository;
     private final RunwayRepository runwayRepository;
     private final CountryWithMostAirportsRetriever countryWithMostAirportsRetriever;
+    private final RunwaysRetriever runwaysRetriever;
 
     private static final Logger LOG = LoggerFactory.getLogger(AirportsAppCommandLineRunner.class);
 
-    public AirportsAppCommandLineRunner(CsvReader csvReader, AirportRepository airportRepository, CountryRepository countryRepository, RunwayRepository runwayRepository, RunwaysRetriever runwaysRetriever, CountryWithMostAirportsRetriever countryWithMostAirportsRetriever) {
+    public AirportsAppCommandLineRunner(CsvReader csvReader,
+                                        AirportRepository airportRepository,
+                                        CountryRepository countryRepository,
+                                        RunwayRepository runwayRepository,
+                                        RunwaysRetriever runwaysRetriever,
+                                        CountryWithMostAirportsRetriever countryWithMostAirportsRetriever){
         this.csvReader = csvReader;
         this.airportRepository = airportRepository;
         this.countryRepository = countryRepository;
         this.runwayRepository = runwayRepository;
+        this.runwaysRetriever = runwaysRetriever;
         this.countryWithMostAirportsRetriever = countryWithMostAirportsRetriever;
     }
 
@@ -65,12 +74,28 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        initializeDataBase();
+        System.out.println("Enter country or country code: \n");
+        Scanner scanner = new Scanner(System.in);
+        String country = scanner.nextLine();
 
-//        runwaysRetriever.searchRunwaysByCountry();
+        retrieveRunwaysPerCountryAndPrint(country);
 
         List<CountryWithNumberOfAirports> resultClasses = countryWithMostAirportsRetriever.findCountryWithMostAirports();
         resultClasses.forEach(System.out::println);
+    }
+
+    private void retrieveRunwaysPerCountryAndPrint(String country) {
+        Map<String, List<Runway>> runwaysPerAirport = runwaysRetriever.searchRunwaysByCountry(country);
+
+        StringBuilder s = new StringBuilder();
+        for(String airport: runwaysPerAirport.keySet()) {
+            s.append(airport).append(": ");
+            for(Runway runway: runwaysPerAirport.get(airport)) {
+                s.append(runway.getId() + ", ");
+            }
+            s.append("\n");
+        }
+        System.out.println(s);
     }
 
 }
