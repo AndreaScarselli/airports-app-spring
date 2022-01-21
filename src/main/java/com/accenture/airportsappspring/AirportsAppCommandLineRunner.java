@@ -74,26 +74,35 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Enter country or country code: \n");
-        Scanner scanner = new Scanner(System.in);
-        String country = scanner.nextLine();
+        while(true) {
+            System.out.println("Enter country or country code: \n");
+            Scanner scanner = new Scanner(System.in);
+            String country = scanner.nextLine();
 
-        retrieveRunwaysPerCountryAndPrint(country);
+            retrieveRunwaysPerCountryAndPrint(country);
 
-        List<CountryWithNumberOfAirports> resultClasses = countryWithMostAirportsRetriever.findCountryWithMostAirports();
-        resultClasses.forEach(System.out::println);
+            List<CountryWithNumberOfAirports> resultClasses = countryWithMostAirportsRetriever.findCountryWithMostAirports();
+            resultClasses.forEach(System.out::println);
+        }
     }
 
-    private void retrieveRunwaysPerCountryAndPrint(String country) {
-        Map<String, List<Runway>> runwaysPerAirport = runwaysRetriever.searchRunwaysByCountry(country);
+    private void retrieveRunwaysPerCountryAndPrint(String countryName) {
+        Map<Country, Map<Airport, List<Runway>>> runwaysPerCountry = runwaysRetriever.searchRunwaysByCountry(countryName);
 
         StringBuilder s = new StringBuilder();
-        for(String airport: runwaysPerAirport.keySet()) {
-            s.append(airport).append(": ");
-            for(Runway runway: runwaysPerAirport.get(airport)) {
-                s.append(runway.getId() + ", ");
+        for(Country country: runwaysPerCountry.keySet()) {
+            s.append("Country " + country.getName() + ": \n");
+            Map<Airport, List<Runway>> runwaysPerAirport = runwaysPerCountry.get(country);
+            for (Airport airport : runwaysPerAirport.keySet()) {
+                s.append(airport.getName()).append(": ");
+                for (Runway runway : runwaysPerAirport.get(airport)) {
+                    s.append(runway.getId() + ", ");
+                }
+                s.append("\n");
             }
-            s.append("\n");
+        }
+        if(s.toString().equals("")) {
+            s.append("There are no runways information for the specified country.");
         }
         System.out.println(s);
     }

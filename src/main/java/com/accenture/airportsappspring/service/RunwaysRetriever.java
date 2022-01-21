@@ -9,6 +9,7 @@ import com.accenture.airportsappspring.repository.RunwayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,24 +30,41 @@ public class RunwaysRetriever {
         this.runwayRepository = runwayRepository;
     }
 
-    public Map<String, List<Runway>> searchRunwaysByCountry(String country) {
-        Map<String, List<Runway>> runwaysPerAirport = new HashMap<>();
+    // return a Map<Country, Map<Airport, List<Runways>>>
+    public Map<Country, Map<Airport, List<Runway>>> searchRunwaysByCountry(String countryName) {
+        Map<Country, Map<Airport, List<Runway>>> runwaysPerCountry = new HashMap<>();
+        List<Country> matchingCountries = new ArrayList<>();
 
-        if(country.length() > COUNTRY_CODE_LENGTH) {
-            country = convertCountryNameToCountryCode(country);
-        }
+        Country matchingCountry = populateCountriesWhenACountryCodeIsReceived(countryName);
+        if(matchingCountry != null) {
+            matchingCountries.add(matchingCountry);
+        } else {
+            matchingCountries = convertCountryNameToCountryCode(countryName);
 
-        List<Airport> airports = findAirportsInACountry(country);
-
-        for(Airport airport: airports) {
-            // discard airports without runways
-            List<Runway> runwaysInTheAirport = findRunwaysInAnAirport(airport);
-            if(!runwaysInTheAirport.isEmpty()) {
-                runwaysPerAirport.put(airport.getName(), runwaysInTheAirport);
+            if (matchingCountries == null || matchingCountries.isEmpty()) {
+                // it means it is not possible to associate the string tu any country
+                return runwaysPerCountry;
             }
         }
 
-        return runwaysPerAirport;
+        for (Country country : matchingCountries) {
+            Map<Airport, List<Runway>> runwaysPerAirport = new HashMap<>();
+            List<Airport> airports = findAirportsInACountry(country.getCode());
+            for (Airport airport : airports) {
+                // discard airports without runways
+                List<Runway> runwaysInTheAirport = findRunwaysInAnAirport(airport);
+                if (!runwaysInTheAirport.isEmpty()) {
+                    runwaysPerAirport.put(airport, runwaysInTheAirport);
+                }
+            }
+            runwaysPerCountry.put(country, runwaysPerAirport);
+        }
+
+        return runwaysPerCountry;
+    }
+
+    private Country populateCountriesWhenACountryCodeIsReceived(String countryCode) {
+        return countryRepository.findByCodeIgnoreCase(countryCode);
     }
 
     private List<Runway> findRunwaysInAnAirport(Airport airport) {
@@ -57,10 +75,10 @@ public class RunwaysRetriever {
         return airportRepository.findAllByIsoCountryIgnoreCase(country);
     }
 
-    private String convertCountryNameToCountryCode(String countryName) {
-        Country country = countryRepository.findByNameIgnoreCase(countryName);
-        if(country != null) {
-            return country.getCode();
+    private List<Country> convertCountryNameToCountryCode(String countryName) {
+        List<Country> countries = countryRepository.findByNameContainingIgnoreCase(countryName);
+        if (countries.size() != 0) {
+            return countries;
         }
         return null;
     }
