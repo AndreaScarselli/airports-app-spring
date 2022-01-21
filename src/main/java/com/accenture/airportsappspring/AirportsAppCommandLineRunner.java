@@ -6,15 +6,17 @@ import com.accenture.airportsappspring.model.Runway;
 import com.accenture.airportsappspring.repository.AirportRepository;
 import com.accenture.airportsappspring.repository.CountryRepository;
 import com.accenture.airportsappspring.repository.RunwayRepository;
+import com.accenture.airportsappspring.service.CountryWithMostAirportsRetriever;
 import com.accenture.airportsappspring.service.RunwaysRetriever;
 import com.accenture.airportsappspring.util.CsvReader;
+import com.accenture.airportsappspring.util.CountryWithNumberOfAirports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,26 +37,19 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
     private final AirportRepository airportRepository;
     private final CountryRepository countryRepository;
     private final RunwayRepository runwayRepository;
-    private final RunwaysRetriever runwaysRetriever;
+    private final CountryWithMostAirportsRetriever countryWithMostAirportsRetriever;
 
-    @Autowired
-    public AirportsAppCommandLineRunner(CsvReader csvReader, AirportRepository airportRepository, CountryRepository countryRepository, RunwayRepository runwayRepository, RunwaysRetriever runwaysRetriever) {
+    private static final Logger LOG = LoggerFactory.getLogger(AirportsAppCommandLineRunner.class);
+
+    public AirportsAppCommandLineRunner(CsvReader csvReader, AirportRepository airportRepository, CountryRepository countryRepository, RunwayRepository runwayRepository, RunwaysRetriever runwaysRetriever, CountryWithMostAirportsRetriever countryWithMostAirportsRetriever) {
         this.csvReader = csvReader;
         this.airportRepository = airportRepository;
         this.countryRepository = countryRepository;
         this.runwayRepository = runwayRepository;
-        this.runwaysRetriever = runwaysRetriever;
+        this.countryWithMostAirportsRetriever = countryWithMostAirportsRetriever;
     }
 
-    private static Logger LOG = LoggerFactory.getLogger(AirportsAppCommandLineRunner.class);
-
-    @Override
-    public void run(String... args) throws Exception {
-        initializeDataBase();
-
-        runwaysRetriever.searchRunwaysByCountry();
-    }
-
+    @PostConstruct
     private void initializeDataBase() throws IOException {
         LOG.info("Reading CSVs.");
         List<Airport> airports = csvReader.readCsv(airportsCsvPath, Airport.class);
@@ -66,6 +61,16 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
         runwayRepository.saveAll(runways);
         countryRepository.saveAll(countries);
         LOG.info("Saving Entities - Done!");
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        initializeDataBase();
+
+//        runwaysRetriever.searchRunwaysByCountry();
+
+        List<CountryWithNumberOfAirports> resultClasses = countryWithMostAirportsRetriever.findCountryWithMostAirports();
+        resultClasses.forEach(System.out::println);
     }
 
 }
