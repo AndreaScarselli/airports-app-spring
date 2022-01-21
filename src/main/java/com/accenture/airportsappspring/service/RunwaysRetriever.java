@@ -17,8 +17,6 @@ import java.util.Map;
 @Service
 public class RunwaysRetriever {
 
-    private static final int COUNTRY_CODE_LENGTH = 2;
-
     private final AirportRepository airportRepository;
     private final CountryRepository countryRepository;
     private final RunwayRepository runwayRepository;
@@ -30,56 +28,59 @@ public class RunwaysRetriever {
         this.runwayRepository = runwayRepository;
     }
 
-    // return a Map<Country, Map<Airport, List<Runways>>>
     public Map<Country, Map<Airport, List<Runway>>> searchRunwaysByCountry(String countryName) {
-        Map<Country, Map<Airport, List<Runway>>> runwaysPerCountry = new HashMap<>();
-        List<Country> matchingCountries = new ArrayList<>();
+        List<Country> matchingCountries =  getMatchingCountries(countryName);
+        return getRunwaysInMatchingCountries(matchingCountries);
+    }
 
-        Country matchingCountry = populateCountriesWhenACountryCodeIsReceived(countryName);
-        if(matchingCountry != null) {
-            matchingCountries.add(matchingCountry);
-        } else {
-            matchingCountries = convertCountryNameToCountryCode(countryName);
-
-            if (matchingCountries == null || matchingCountries.isEmpty()) {
-                // it means it is not possible to associate the string tu any country
-                return runwaysPerCountry;
-            }
-        }
-
+    private Map<Country, Map<Airport, List<Runway>>> getRunwaysInMatchingCountries(List<Country> matchingCountries) {
+        Map<Country, Map<Airport, List<Runway>>> runwaysInMatchingCountries = new HashMap<>();
         for (Country country : matchingCountries) {
-            Map<Airport, List<Runway>> runwaysPerAirport = new HashMap<>();
-            List<Airport> airports = findAirportsInACountry(country.getCode());
-            for (Airport airport : airports) {
-                // discard airports without runways
-                List<Runway> runwaysInTheAirport = findRunwaysInAnAirport(airport);
-                if (!runwaysInTheAirport.isEmpty()) {
-                    runwaysPerAirport.put(airport, runwaysInTheAirport);
-                }
-            }
-            runwaysPerCountry.put(country, runwaysPerAirport);
+            runwaysInMatchingCountries.put(country, getRunwaysForAllTheAirportsInACountry(country));
         }
-
-        return runwaysPerCountry;
+        return runwaysInMatchingCountries;
     }
 
-    private Country populateCountriesWhenACountryCodeIsReceived(String countryCode) {
-        return countryRepository.findByCodeIgnoreCase(countryCode);
+    private Map<Airport, List<Runway>> getRunwaysForAllTheAirportsInACountry(Country country) {
+        List<Airport> airports = getAirportsInACountry(country.getCode());
+        Map<Airport, List<Runway>> runwaysInACountry = new HashMap<>();
+        //for each airport in the country
+        for (Airport airport : airports) {
+            List<Runway> runwaysInAnAirport = getRunwaysInAnAirport(airport);
+            // discard airports without runways
+            if(!runwaysInAnAirport.isEmpty()) {
+                runwaysInACountry.put(airport, getRunwaysInAnAirport(airport));
+            }
+        }
+        return runwaysInACountry;
     }
 
-    private List<Runway> findRunwaysInAnAirport(Airport airport) {
+    private List<Runway> getRunwaysInAnAirport(Airport airport) {
         return runwayRepository.findAllByAirportIdent(airport.getIdent());
     }
 
-    private List<Airport> findAirportsInACountry(String country) {
+    public List<Country> getMatchingCountries(String countryName) {
+        List<Country> matchingCountries = new ArrayList<>();
+
+        Country matchingCountry = getCountryFromACountryCode(countryName);
+        if(matchingCountry != null) {
+            matchingCountries.add(matchingCountry);
+        } else {
+            matchingCountries = getCountriesFromCountryName(countryName);
+        }
+
+        return matchingCountries;
+    }
+
+    private Country getCountryFromACountryCode(String countryCode) {
+        return countryRepository.findByCodeIgnoreCase(countryCode);
+    }
+
+    private List<Airport> getAirportsInACountry(String country) {
         return airportRepository.findAllByIsoCountryIgnoreCase(country);
     }
 
-    private List<Country> convertCountryNameToCountryCode(String countryName) {
-        List<Country> countries = countryRepository.findByNameContainingIgnoreCase(countryName);
-        if (countries.size() != 0) {
-            return countries;
-        }
-        return null;
+    private List<Country> getCountriesFromCountryName(String countryName) {
+        return countryRepository.findByNameContainingIgnoreCase(countryName);
     }
 }
