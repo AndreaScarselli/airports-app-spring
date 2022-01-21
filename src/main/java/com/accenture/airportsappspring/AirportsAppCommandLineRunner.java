@@ -91,7 +91,7 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
 
         StringBuilder s = new StringBuilder();
         for(Country country: runwaysPerCountry.keySet()) {
-            s.append("Country " + country.getName() + ": \n");
+            s.append("---Country " + country.getName() + ": \n");
             Map<Airport, List<Runway>> runwaysPerAirport = runwaysPerCountry.get(country);
             for (Airport airport : runwaysPerAirport.keySet()) {
                 s.append(airport.getName()).append(": ");
