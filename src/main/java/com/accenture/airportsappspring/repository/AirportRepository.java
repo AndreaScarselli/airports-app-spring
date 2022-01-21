@@ -6,5 +6,9 @@ package com.accenture.airportsappspring.repository;
 import com.accenture.airportsappspring.model.Airport;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface AirportRepository extends CrudRepository<Airport,String> {
+
+    public List<Airport> findAllByIsoCountryIgnoreCase(String country);
 }
