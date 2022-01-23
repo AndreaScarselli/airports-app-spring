@@ -16,11 +16,11 @@ public class RunwayRepositoryTest {
 
     @Test
     public void testShouldReturnRunwaysByAirportIdent() {
-        Assertions.assertEquals(2, runwayRepository.findAllByAirportIdent("00ID").size());
+        Assertions.assertEquals(2, runwayRepository.findAllByAirportRef("6537").size());
     }
 
     @Test
     public void testShouldReturnNoRunwaysWithWrongIdent() {
-        Assertions.assertEquals(0, runwayRepository.findAllByAirportIdent("00AA").size());
+        Assertions.assertEquals(0, runwayRepository.findAllByAirportRef("653777").size());
     }
 }

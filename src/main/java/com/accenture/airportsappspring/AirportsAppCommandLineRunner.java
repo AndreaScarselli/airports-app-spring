@@ -1,8 +1,6 @@
 package com.accenture.airportsappspring;
 
-import com.accenture.airportsappspring.model.Airport;
 import com.accenture.airportsappspring.model.Country;
-import com.accenture.airportsappspring.model.Runway;
 import com.accenture.airportsappspring.service.CountryWithMostAirportsRetriever;
 import com.accenture.airportsappspring.service.RunwaysRetriever;
 import com.accenture.airportsappspring.util.CountryWithNumberOfAirports;
@@ -41,16 +39,16 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
     }
 
     private void retrieveRunwaysPerCountryAndPrint(String countryName) {
-        Map<Country, Map<Airport, List<Runway>>> runwaysPerCountry = runwaysRetriever.searchRunwaysByCountry(countryName);
+        Map<Country, Map<String, List<String>>> runwaysPerCountry = runwaysRetriever.searchRunwaysByCountry(countryName);
 
         StringBuilder s = new StringBuilder();
         for(Country country: runwaysPerCountry.keySet()) {
             s.append("---Country " + country.getName() + ": \n");
-            Map<Airport, List<Runway>> runwaysPerAirport = runwaysPerCountry.get(country);
-            for (Airport airport : runwaysPerAirport.keySet()) {
-                s.append(airport.getName()).append(": ");
-                for (Runway runway : runwaysPerAirport.get(airport)) {
-                    s.append(runway.getId() + ", ");
+            Map<String, List<String>> runwaysPerAirport = runwaysPerCountry.get(country);
+            for (String airport : runwaysPerAirport.keySet()) {
+                s.append(airport).append(": ");
+                for (String runway : runwaysPerAirport.get(airport)) {
+                    s.append(runway + ", ");
                 }
                 s.append("\n");
             }
