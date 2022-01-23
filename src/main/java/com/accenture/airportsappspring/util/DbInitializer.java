@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Component
-public class CsvReader {
+public class DbInitializer {
 
     @Value("${csv-path.countries}")
     private String countriesCsvPath;
@@ -41,12 +41,12 @@ public class CsvReader {
     private final CountryRepository countryRepository;
     private final RunwayRepository runwayRepository;
 
-    private static final Logger LOG = LoggerFactory.getLogger(CsvReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DbInitializer.class);
 
-    public CsvReader(ResourceLoader resourceLoader,
-                     AirportRepository airportRepository,
-                     CountryRepository countryRepository,
-                     RunwayRepository runwayRepository) {
+    public DbInitializer(ResourceLoader resourceLoader,
+                         AirportRepository airportRepository,
+                         CountryRepository countryRepository,
+                         RunwayRepository runwayRepository) {
         this.resourceLoader = resourceLoader;
         this.airportRepository = airportRepository;
         this.countryRepository = countryRepository;
@@ -67,7 +67,6 @@ public class CsvReader {
         LOG.info("Saving Entities - Done!");
     }
 
-    @SuppressWarnings("unchecked")
     public <T> List<T> readCsv(String fileName, Class<T> tClass) throws IOException {
         HeaderColumnNameMappingStrategy<T> headerColumnNameMappingStrategy = new HeaderColumnNameMappingStrategy<>();
         headerColumnNameMappingStrategy.setType(tClass);
@@ -76,7 +75,7 @@ public class CsvReader {
         Path path = Paths.get(resource.getURI());
         Reader reader = Files.newBufferedReader(path);
 
-        CsvToBean csvToBean = new CsvToBeanBuilder(reader)
+        CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
                 .withType(tClass)
                 .withMappingStrategy(headerColumnNameMappingStrategy)
                 .build();
