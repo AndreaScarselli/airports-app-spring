@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface RunwayRepository extends CrudRepository<Runway,String> {
 
-    public List<Runway> findAllByAirportIdent(String airportIdent);
+    List<Runway> findAllByAirportIdent(String airportIdent);
 }
