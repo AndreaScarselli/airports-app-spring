@@ -1,7 +1,6 @@
 package com.accenture.airportsappspring.service;
 
 import com.accenture.airportsappspring.model.Country;
-import com.accenture.airportsappspring.repository.AirportRepository;
 import com.accenture.airportsappspring.repository.CountryRepository;
 import com.accenture.airportsappspring.repository.RunwayRepository;
 import com.accenture.airportsappspring.util.AirportWithRunway;
@@ -16,13 +15,11 @@ import java.util.Map;
 @Service
 public class RunwaysRetriever {
 
-    private final AirportRepository airportRepository;
     private final CountryRepository countryRepository;
     private final RunwayRepository runwayRepository;
 
     @Autowired
-    public RunwaysRetriever(AirportRepository airportRepository, CountryRepository countryRepository, RunwayRepository runwayRepository) {
-        this.airportRepository = airportRepository;
+    public RunwaysRetriever(CountryRepository countryRepository, RunwayRepository runwayRepository) {
         this.countryRepository = countryRepository;
         this.runwayRepository = runwayRepository;
     }
@@ -45,7 +42,6 @@ public class RunwaysRetriever {
         List<AirportWithRunway> airportWithRunwayList = runwayRepository.findAllRunwaysInACountry(country.getCode());
         for (AirportWithRunway airportWithRunway : airportWithRunwayList) {
             List<String> runwaysInAnAirport = runwaysInACountry.get(airportWithRunway.getAirportName());
-            // discard airports without runways
             if(runwaysInAnAirport == null) {
                 runwaysInAnAirport = new ArrayList<>();
             }
@@ -55,7 +51,7 @@ public class RunwaysRetriever {
         return runwaysInACountry;
     }
 
-    public List<Country> getMatchingCountries(String countryName) {
+    private List<Country> getMatchingCountries(String countryName) {
         List<Country> matchingCountries = new ArrayList<>();
 
         Country matchingCountry = getCountryFromACountryCode(countryName);
