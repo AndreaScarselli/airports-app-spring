@@ -26,15 +26,26 @@ public class AirportsAppCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        while (true) {
-            System.out.println("Enter country or country code: \n");
-            Scanner scanner = new Scanner(System.in);
-            String country = scanner.nextLine();
-
-            retrieveRunwaysPerCountryAndPrint(country);
-
-            List<CountryWithNumberOfAirports> resultClasses = countryWithMostAirportsRetriever.findCountryWithMostAirports();
-            resultClasses.forEach(System.out::println);
+        int userInput = 0;
+        Scanner scanner = new Scanner(System.in);
+        while (userInput != 3) {
+            System.out.println("Enter 1 to see the airports in a country, 2 to see the countries with most airports, 3 to exit \n");
+            try {
+                userInput = Integer.parseInt(scanner.nextLine());
+                switch (userInput) {
+                    case 1:
+                        System.out.println("Enter country or country code: \n");
+                        String country = scanner.nextLine();
+                        retrieveRunwaysPerCountryAndPrint(country);
+                        break;
+                    case 2:
+                        List<CountryWithNumberOfAirports> resultClasses = countryWithMostAirportsRetriever.findCountryWithMostAirports();
+                        resultClasses.forEach(System.out::println);
+                        break;
+                }
+            } catch (NumberFormatException nbe) {
+                System.out.println("Please enter a number");
+            }
         }
     }
 
