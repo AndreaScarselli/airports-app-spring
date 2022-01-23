@@ -44,7 +44,7 @@ public class CountryRepositoryTest {
 
 
     @Test
-    public void testCountriesWithMostAirportsShouldReturnCorrectList() {
+    public void testCountriesWithMostAirportsShouldReturnListInTheCorrectOrder() {
         List<CountryWithNumberOfAirports> countriesWithMostAirports = countryRepository.findCountriesWithMostAirports();
         Assertions.assertEquals(10, countriesWithMostAirports.size());
         Assertions.assertEquals("United States", countriesWithMostAirports.get(0).getCountryName());
